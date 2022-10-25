@@ -19,9 +19,6 @@
 #define NO_INTERNET 2
 #define CONFLICTS 3
 
-
-
-
 systemCalls::systemCalls(QObject *parent) : QObject(parent)
 {
 	this->worker = new Worker;
@@ -33,15 +30,12 @@ systemCalls::systemCalls(QObject *parent) : QObject(parent)
 	workerThread.start();
 }
 
-
-
 systemCalls::~systemCalls()
 {
 	workerThread.quit();
 	workerThread.wait();
-
 }
-//https://karanbalkar.com/2014/02/detect-internet-connection-using-qt-5-framework/
+// https://karanbalkar.com/2014/02/detect-internet-connection-using-qt-5-framework/
 Q_INVOKABLE bool systemCalls::isConnectedToNetwork()
 {
 	QList<QNetworkInterface> ifaces = QNetworkInterface::allInterfaces();
@@ -51,8 +45,7 @@ Q_INVOKABLE bool systemCalls::isConnectedToNetwork()
 	{
 		QNetworkInterface iface = ifaces.at(i);
 
-		if (iface.flags().testFlag(QNetworkInterface::IsUp)
-		        && !iface.flags().testFlag(QNetworkInterface::IsLoopBack))
+		if (iface.flags().testFlag(QNetworkInterface::IsUp) && !iface.flags().testFlag(QNetworkInterface::IsLoopBack))
 		{
 			for (int j = 0; j < iface.addressEntries().count(); j++)
 			{
@@ -66,51 +59,45 @@ Q_INVOKABLE bool systemCalls::isConnectedToNetwork()
 	return result;
 }
 
-
-
 Q_INVOKABLE void systemCalls::checkUpdates(bool namesOnly, bool aur)
 {
-	if(worker->upgradeProcessRunning)
+	if (worker->upgradeProcessRunning)
 		return;
 	QTime deliTime;
-// 	if (!systemCalls::isConnectedToNetwork())
-// 	{
-//
-// 		qDebug() << "org.kde.archUpdate: still not connected returning 'No Internet Connection' to plasmoid";
-// 		worker->updates = QStringList();
-// 		worker->updates << "No Internet Connection";
-// 		return;
-//
-// 	}
+	// 	if (!systemCalls::isConnectedToNetwork())
+	// 	{
+	//
+	// 		qDebug() << "org.kde.archUpdate: still not connected returning 'No Internet Connection' to plasmoid";
+	// 		worker->updates = QStringList();
+	// 		worker->updates << "No Internet Connection";
+	// 		return;
+	//
+	// 	}
 	worker->mutex = true;
 	emit systemCalls::checkUpdatesSignal(namesOnly, aur);
-
 }
 
-
-Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake, bool orphan, bool snapRefreshFlag)
+Q_INVOKABLE void systemCalls::upgradeSystem(bool konsoleFlag, bool aur, bool noconfirm, bool yakuake, bool kitty, bool orphan, bool snapRefreshFlag)
 {
-	if(worker->upgradeProcessRunning)
+	if (worker->upgradeProcessRunning)
 		return;
 	worker->mutex = true;
 	worker->upgradeProcessRunning = true;
-	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm, yakuake, orphan,snapRefreshFlag);
+	emit systemCalls::upgradeSystemSignal(konsoleFlag, aur, noconfirm, yakuake, kitty, orphan, snapRefreshFlag);
 }
-
 
 Q_INVOKABLE QStringList systemCalls::readCheckUpdates()
 {
 	QTime deliTime;
-	if(worker->upgradeProcessRunning)
+	if (worker->upgradeProcessRunning)
 		return QStringList();
 	deliTime = QTime::currentTime().addMSecs(500);
-	while(worker->mutex == true)
+	while (worker->mutex == true)
 		QCoreApplication::processEvents();
 
 	worker->mutex = false;
 	qDebug() << "org.kde.archUpdate: Returning updates";
 	return worker->updates;
-
 }
 
 void systemCalls::restartShell()
@@ -123,13 +110,11 @@ void systemCalls::restartShell()
 
 	this->killShellProcess->waitForFinished(-1);
 
-
 	QProcess restartShell;
 	restartShell.start("kstart5", args3);
 
 	delete killShellProcess;
 }
-
 
 void systemCalls::pickNewIcon()
 {
@@ -137,7 +122,7 @@ void systemCalls::pickNewIcon()
 	QString fileName = "";
 
 	fileName = QFileDialog::getOpenFileName(&fileDialog,
-	                                        tr("Open Image"), "/home/", tr("Image Files (*.png *.jpg *.bmp *.svg)"));
+											tr("Open Image"), "/home/", tr("Image Files (*.png *.jpg *.bmp *.svg)"));
 
 	qDebug() << "Selected " << fileName;
 
@@ -146,42 +131,47 @@ void systemCalls::pickNewIcon()
 
 bool systemCalls::setNewIcon(const int mode, const QString fileName)
 {
-		QStringList args;
+	QStringList args;
 
-		switch (mode) {
-        case 0:
-        {
-            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/default.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
-			break;
-        }
-        case 1:
-        {
-            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/light.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
-			break;
-        }
-        case 2:
-        {
-            args << "cp" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/dark.svg" << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
-			break;
-        }
-		case 3:
-        {
-			if (!fileName.isEmpty())
-            	args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
-			break;
-        }
-        }
-		if (args.isEmpty())
-			return false;
-		this->CopyFileProcess = new QProcess();
-		this->CopyFileProcess->start("pkexec", args);
-		this->CopyFileProcess->waitForFinished(-1);
-		const int exitCode = this->CopyFileProcess->exitCode();
-		delete this->CopyFileProcess;
-		if (exitCode == 0)
-			return true;
-
+	switch (mode)
+	{
+	case 0:
+	{
+		args << "cp"
+			 << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/default.svg"
+			 << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
+		break;
+	}
+	case 1:
+	{
+		args << "cp"
+			 << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/light.svg"
+			 << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
+		break;
+	}
+	case 2:
+	{
+		args << "cp"
+			 << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/dark.svg"
+			 << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
+		break;
+	}
+	case 3:
+	{
+		if (!fileName.isEmpty())
+			args << "cp" << fileName << "/usr/share/plasma/plasmoids/org.kde.archUpdate/contents/images/chosen";
+		break;
+	}
+	}
+	if (args.isEmpty())
 		return false;
+	this->CopyFileProcess = new QProcess();
+	this->CopyFileProcess->start("pkexec", args);
+	this->CopyFileProcess->waitForFinished(-1);
+	const int exitCode = this->CopyFileProcess->exitCode();
+	delete this->CopyFileProcess;
+	if (exitCode == 0)
+		return true;
+
+	return false;
 }
-
-

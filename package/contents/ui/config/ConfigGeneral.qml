@@ -13,6 +13,7 @@ Item {
     property alias cfg_checkInterval: checkInterval.value
     property alias cfg_hideVersion: hideVersionCheckBox.checked
     property alias cfg_konsoleFlag: konsoleCheckBox.checked
+    property alias cfg_kittyFlag: kittyCheckBox.checked
     property alias cfg_aurSupportFlag: aurSupportCheckBox.checked
     property alias cfg_noConfirmAURFlag: noConfirmAURCheckBox.checked
     property alias cfg_yakuakeFlag: yakuakeCheckbox.checked
@@ -70,6 +71,21 @@ Item {
             onClicked: function () {
                 if (konsoleCheckBox.checked) {
                     yakuakeCheckbox.checked = false
+                    kittyCheckBox.checked = false
+                }
+            }
+        }
+
+        Label {
+            text: i18n("Show upgrade on kitty")
+        }
+        CheckBox {
+            id: kittyCheckBox
+            Layout.columnSpan: 2
+            onClicked: function () {
+                if (kittyCheckBox.checked) {
+                    yakuakeCheckbox.checked = false
+                    konsoleCheckBox.checked = false
                 }
             }
         }
@@ -84,6 +100,7 @@ Item {
             onClicked: function () {
                 if (yakuakeCheckbox.checked) {
                     konsoleCheckBox.checked = false
+                    kittyCheckBox.checked = false
                 }
             }
         }

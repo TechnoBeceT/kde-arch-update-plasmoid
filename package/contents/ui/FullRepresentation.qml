@@ -73,12 +73,13 @@ Item {
 			onClicked: function () {
 
 				console.log("KONSOLE FLAG" + plasmoid.configuration.konsoleFlag)
+				console.log("KITTY FLAG" + plasmoid.configuration.kittyFlag)
 				console.log("AUR FLAG" + plasmoid.configuration.aurSupportFlag)
 				console.log("NO COFIRM AUR" + plasmoid.configuration.noConfirmAURFlag)
 				console.log("YAKUAKE" + plasmoid.configuration.yakuakeFlag)
                 console.log("ORPHAN FLAG" + plasmoid.configuration.orphanFlag)
                 console.log("SNAP FLAG" + plasmoid.configuration.snapRefreshFlag);
-                backend.upgradeSystem(plasmoid.configuration.konsoleFlag,plasmoid.configuration.aurSupportFlag,plasmoid.configuration.noConfirmAURFlag,plasmoid.configuration.yakuakeFlag,plasmoid.configuration.orphanFlag, plasmoid.configuration.snapRefreshFlag);
+                backend.upgradeSystem(plasmoid.configuration.konsoleFlag,plasmoid.configuration.aurSupportFlag,plasmoid.configuration.noConfirmAURFlag,plasmoid.configuration.yakuakeFlag,plasmoid.configuration.kittyFlag,plasmoid.configuration.orphanFlag, plasmoid.configuration.snapRefreshFlag);
 
 				main.updatesPending=0;
 				main.theModel.clear();

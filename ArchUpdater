@@ -12,6 +12,16 @@ if [ "$1" == "konsole" ];then
     konsole --hold -e /bin/bash -c "$command"
 fi
 
+if [ "$1" == "kitty" ];then
+    IFS=',' read -r -a array <<<"${@:2}"
+    for i in "${array[@]}"
+    do
+        command="$command $i;"
+    done
+    echo "$command"
+    kitty --hold -e /bin/bash -c "$command"
+fi
+
 if [ "$1" == "yakuake" ]; then
     IFS=',' read -r -a array <<<"${@:3}"
     for i in "${array[@]}"
